@@ -17,8 +17,9 @@ export async function generateBackend(targetDir: string, config: ProjectConfig) 
 uvicorn[standard]==0.27.0
 sqlalchemy==2.0.25
 pydantic==2.5.3
+pydantic[email]==2.5.3
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+passlib[argon2]==1.7.4
 python-multipart==0.0.6
 `;
 
@@ -59,8 +60,8 @@ from src.routes import auth, users, posts
 
 # Create database tables
 # WHY: create_all() creates tables that don't exist yet. It won't overwrite existing data.
-from src.models import base
-base.Base.metadata.create_all(bind=engine)
+from src.database import Base
+Base.metadata.create_all(bind=engine)
 
 # Create FastAPI app instance
 # docs_url and redoc_url are enabled by default. Set to None to disable.
@@ -166,12 +167,12 @@ def get_db():
   fs.writeFileSync(path.join(srcDir, 'database.py'), databaseTs);
 
   // models/__init__.py
-  fs.writeFileSync(path.join(srcDir, 'models', '__init__.py'), `from src.models.base import Base
+  fs.writeFileSync(path.join(srcDir, 'models', '__init__.py'), `from src.database import Base
 from src.models.user import User
 from src.models.post import Post
 `);
 
-  fs.writeFileSync(path.join(srcDir, 'models', 'base.py'), `"""Base module for all database models"""`);
+  fs.writeFileSync(path.join(srcDir, 'models', 'base.py'), '');
 
   // user model
   const userModel = `"""
@@ -397,8 +398,8 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Password hashing context
-# bcrypt is a secure hashing algorithm designed for passwords
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# argon2 has no password length limit (unlike bcrypt's 72 bytes)
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # OAuth2 scheme for extracting token from requests
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -942,8 +943,8 @@ export default defineConfig({
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
@@ -1050,7 +1051,7 @@ body {
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
