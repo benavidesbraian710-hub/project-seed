@@ -1,7 +1,7 @@
 {
   "name": "project-seed",
   "version": "1.0.0",
-  "description": "CLI tool to scaffold real projects with teaching CLAUDE.md",
+  "description": "CLI tool to scaffold real projects with teaching CLAUDE.md for beginners",
   "type": "module",
   "bin": {
     "project-seed": "./dist/index.js"

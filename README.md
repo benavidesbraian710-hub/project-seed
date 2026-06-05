@@ -154,11 +154,3 @@ Project Seed 通过：
 1. 生成完整可运行的项目（不是骨架）
 2. 在每个关键文件里写注释解释 WHY
 3. 提供教学 CLAUDE.md，手把手教你下一步做什么
-
-## License
-
-MIT
-
----
-
-_Generated with Claude Code_
